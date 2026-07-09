@@ -3,14 +3,14 @@ module tb_good_mux;
 	// Inputs
 	reg i0,i1,sel;
 	// Outputs
-	wire y;
+	wire out;
 
         // Instantiate the Unit Under Test (UUT)
 	good_mux uut (
 		.sel(sel),
 		.i0(i0),
 		.i1(i1),
-		.y(y)
+		.out(out)
 	);
 
 	initial begin

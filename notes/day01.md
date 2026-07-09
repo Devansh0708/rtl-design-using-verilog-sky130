@@ -1,5 +1,4 @@
 # Day 1 – Introduction to iVerilog, Design and Testbench
-**Date:** 09-07-2026
 
 # Objective
 Understand the RTL simulation flow using Icarus Verilog (iverilog) and GTKWave, and learn the purpose of Design, Testbench, and Simulation before synthesis

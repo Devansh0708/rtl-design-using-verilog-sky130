@@ -1,10 +1,10 @@
 
-module good_mux (input i0 , input i1 , input sel , output reg y);
+module good_mux (input i0 , input i1 , input sel , output reg out);
 always @ (*)
 begin
 	if(sel)
-		y <= i1;
+	        out <= i1;
 	else 
-		y <= i0;
+		out <= i0;
 end
 endmodule
