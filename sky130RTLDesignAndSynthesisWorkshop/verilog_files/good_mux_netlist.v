@@ -4,14 +4,6 @@
 (* src = "good_mux.v:2" *)
 module good_mux(i0, i1, sel, out);
   (* src = "good_mux.v:2" *)
-  wire _0_;
-  (* src = "good_mux.v:2" *)
-  wire _1_;
-  (* src = "good_mux.v:2" *)
-  wire _2_;
-  (* src = "good_mux.v:2" *)
-  wire _3_;
-  (* src = "good_mux.v:2" *)
   input i0;
   (* src = "good_mux.v:2" *)
   input i1;
@@ -19,14 +11,10 @@ module good_mux(i0, i1, sel, out);
   output out;
   (* src = "good_mux.v:2" *)
   input sel;
-  sky130_fd_sc_hd__mux2_1 _4_ (
-    .A0(_0_),
-    .A1(_1_),
-    .S(_3_),
-    .X(_2_)
+  sky130_fd_sc_hd__mux2_1 _0_ (
+    .A0(i0),
+    .A1(i1),
+    .S(sel),
+    .X(out)
   );
-  assign _0_ = i0;
-  assign _1_ = i1;
-  assign _3_ = sel;
-  assign out = _2_;
 endmodule
