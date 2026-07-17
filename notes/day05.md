@@ -331,3 +331,176 @@ It is acceptable to omit the **else** because flip-flops naturally store previou
 - Use blocking (`=`) for combinational logic.
 - Use non-blocking (`<=`) for sequential logic.
 ---
+
+## For Loop and For Generate
+
+---
+### Looping Constructs in Verilog
+There are two types of looping constructs used in RTL design:
+#### For Loop
+- Written **inside an `always` block**.
+- Used to repeatedly evaluate statements.
+- Does **not** instantiate hardware.
+- Synthesizer unrolls the loop into equivalent combinational or sequential logic.
+
+#### For Generate
+- Written **outside an `always` block**.
+- Used to instantiate multiple copies of hardware.
+- Creates repeated instances of modules or gates.
+- Executed during elaboration before synthesis.
+---
+
+## Difference Between For Loop and For Generate
+
+| For Loop | For Generate |
+|----------|--------------|
+| Inside `always` block | Outside `always` block |
+| Evaluates statements | Replicates hardware |
+| Uses `integer` variable | Uses `genvar` variable |
+| No hardware instantiation | Instantiates multiple hardware blocks |
+| Used for algorithms and logic evaluation | Used for scalable hardware generation |
+---
+
+## Using FOR Loop for Large Multiplexers
+Writing a large multiplexer using a CASE statement becomes lengthy.
+Example for a 32:1 MUX:
+```verilog
+always @(*) begin
+    case(sel)
+        5'b00000 : y = in[0];
+        5'b00001 : y = in[1];
+        ...
+        5'b11111 : y = in[31];
+    endcase
+end
+```
+Instead, a FOR loop provides a much simpler implementation.
+```verilog
+integer i;
+always @(*) begin
+    for(i=0;i<32;i=i+1)
+    begin
+        if(i==sel)
+            y = in[i];
+    end
+end
+```
+
+### Working
+- The loop checks every value of `i`.
+- Whenever `i == sel`, the corresponding input is assigned to the output.
+- During synthesis, this is converted into a **32:1 Multiplexer**.
+
+### Advantages
+- Compact RTL code.
+- Easier to scale.
+- Better readability.
+- Preferred for large multiplexers.
+---
+
+## Using FOR Loop for Demultiplexer
+Example: 1×8 DEMUX
+```verilog
+integer i;
+always @(*) begin
+    op_bus = 8'b00000000;
+
+    for(i=0;i<8;i=i+1)
+    begin
+        if(i==sel)
+            op_bus[i] = input;
+    end
+end
+```
+
+### Working
+Initially,
+```
+op_bus = 00000000
+```
+If
+```
+sel = 5
+input = 1
+```
+Output becomes
+```
+00100000
+```
+Only the selected output line becomes HIGH.
+
+### Advantages
+- Eliminates multiple IF statements.
+- Easily scalable.
+- Clean and readable RTL.
+---
+
+## FOR Generate
+Unlike a normal FOR loop, **FOR Generate** creates multiple copies of hardware.
+Instead of manually writing
+```verilog
+and U1(y[0],a[0],b[0]);
+and U2(y[1],a[1],b[1]);
+and U3(y[2],a[2],b[2]);
+...
+```
+we can use
+```verilog
+genvar i;
+generate
+for(i=0;i<8;i=i+1)
+begin
+and U_AND
+(
+    y[i],
+    a[i],
+    b[i]
+);
+end
+endgenerate
+```
+
+### Working
+The synthesizer automatically creates eight AND gates.
+This process is called **hardware replication**.
+---
+
+## Ripple Carry Adder Using FOR Generate
+Assume a 1-bit Full Adder module has already been designed.
+Instead of instantiating multiple Full Adders manually,
+```
+FA0
+FA1
+FA2
+FA3
+```
+FOR Generate can automatically instantiate them.
+```verilog
+genvar i;
+generate
+for(i=0;i<4;i=i+1)
+begin
+full_adder FA
+(
+    ...
+);
+end
+endgenerate
+```
+
+### Benefits
+- Reduces repetitive code.
+- Easier to expand to larger bit-widths.
+- Improves code reusability.
+- Preferred in parameterized designs.
+---
+
+## FOR Loop vs FOR Generate
+| Feature | FOR Loop | FOR Generate |
+|---------|----------|--------------|
+| Location | Inside `always` block | Outside `always` block |
+| Variable Type | `integer` | `genvar` |
+| Purpose | Evaluate logic | Replicate hardware |
+| Instantiates Hardware | No | Yes |
+| Executed During | Simulation/Synthesis | Elaboration |
+---
